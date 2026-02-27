@@ -21,14 +21,14 @@ import pandas as pd
 import matplotlib
 matplotlib.use('Agg')          # headless rendering (no display needed)
 import matplotlib.pyplot as plt
-from matplotlib.gridspec import GridSpec
+from mpl_toolkits.mplot3d import Axes3D   # noqa: F401
 
 from sklearn.model_selection import train_test_split, StratifiedKFold
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import (
-    roc_curve, auc, confusion_matrix, ConfusionMatrixDisplay,
+    accuracy_score, roc_curve, auc, confusion_matrix, ConfusionMatrixDisplay,
     classification_report, f1_score
 )
 
@@ -161,7 +161,7 @@ X_te_s = scaler_ann.transform(X_test)
 ann_base = MLPClassifier(
     hidden_layer_sizes=(64, 32), max_iter=500, random_state=42
 )
-ann_base.fit(X_tr_s, y_tr_s if False else y_train)
+ann_base.fit(X_tr_s, y_train)
 
 y_ann_pred  = ann_base.predict(X_te_s)
 y_ann_proba = ann_base.predict_proba(X_te_s)[:, 1]
@@ -247,7 +247,6 @@ plt.savefig('results/actual_vs_predicted_hybrid.png', dpi=150)
 plt.close()
 
 # 3-D scatter
-from mpl_toolkits.mplot3d import Axes3D   # noqa: F401
 fig3d = plt.figure(figsize=(7, 6))
 ax3d  = fig3d.add_subplot(111, projection='3d')
 sc = ax3d.scatter(X_test[:, 0], X_test[:, 1], X_test[:, 2],
@@ -334,7 +333,6 @@ print("=" * 60)
 print(f"{'Model':<25} {'Accuracy':>10} {'F1':>8} {'AUC':>8} {'FN':>6}")
 print("-" * 60)
 
-from sklearn.metrics import accuracy_score
 for name, y_p, y_proba_v, cm_v in [
     ('Random Forest',     y_rf_pred,  y_rf_proba,  cm_rf),
     ('ANN (MLP)',         y_ann_pred, y_ann_proba, cm_ann),
